@@ -1,0 +1,229 @@
+---
+chapter: 6
+knit: "bookdown::render_book"
+---
+
+```{r ch6setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE, messages=FALSE, warning=FALSE)
+# Make sure you have the latest version of rmarkdown and bookdown
+#devtools::install_github("rstudio/rmarkdown")
+#devtools::install_github("rstudio/bookdown")
+read_chunk("src/chapter6.R")
+```
+
+```{r packages6, warning=FALSE, message=FALSE}
+```
+
+# Conclusion {#ch:paper6}
+
+## Summary of the main ideas and contributions
+
+Forecasting is a key activity for any business to operate efficiently. Rapid advances in computing technologies have led to organisations being able to collect and access unimaginable amounts of time series data. Hence, many businesses require reliable and efficient ways for forecasting a large number of time series completely automatically.  This thesis has presented three forecasting algorithms for large-scale applications. A fundamental aspect of the algorithms is the use of a meta-learning approach to guide a search for forecast model selection. In each of these algorithms, a vector of features calculated on time series becomes the input to the meta-learner. All the algorithms comprise two phases: the offline phase and the online phase. A key advantage of the algorithms is the idea of outsourcing most of the heavy computational work to the offline phase. 
+
+The work of this thesis covers four topics: i) time series features, ii) meta-learning, iii) machine learning interpretability and iv) automatic approaches for large-scale time series forecasting. 
+
+
+The main contribution of Chapter \ref{ch:paper2}, was to propose a meta-learning framework to identify the 'best' forecast-model for each individual series. This framework is referred to as FFORMS: Feature-based FORecast-Model Selection. First a set of features that are useful in identifying suitable forecast models was identified, then extended by adding previously neglected features of time series.
+The FFORMS framework builds a mapping that relates the features of a time series to the 'best' forecast-model using a random forest.  A key advantage of the proposed framework is that the time-consuming process of training a random forest is performed in the offline phase. The online phase involves calculating the features of a time series and using the pre-trained random forest to identify the best forecast model. Hence, generating forecasts only involves the estimation of a single model and computed forecasts based on the estimated model. In doing so, the FFORMS framework fills an important gap in contemporary forecasting practice, with many available models to choose from and with predictions being required extremely fast. 
+
+In Chapter \ref{ch:paper3}, the FFORMS framework was extended to handle weekly, daily and hourly series, as was the diversity of models used as class labels.  The application of the FFORMS framework to the M4 competition data was analysed. The FFORMS approach yields accurate forecasts comparable to several benchmarks and other commonly used automated approaches for forecasting.  The main contribution of Chapter \ref{ch:paper3} was the exploration of what is happening under the hood of the FFORMS framework, thereby presenting an understanding of what features lead to the different choice of models for forecasting and how different features influence the predicted outcome. This was accomplished using model-agnostic machine learning approaches. The chapter explored **which** features are the most important for the choice of the FFORMS framework, and **where** they are most important: that is, for the overall classification process, or within a specific class of models or a set of multiple classes of models. Further, partial dependency plots were used to visualise **when** and **how** these features link with the prediction outcome of the FFORMS framework. Finally, the chapter explored **when** and **how strongly** features interact with other features. For all features, the displayed relationships of partial dependency plots are consistent with the domain knowledge expectations. This is an important aspect in encouraging people to trust and use the proposed framework effectively.
+
+In Chapter \ref{ch:paper4}, the main contribution was the new meta-learning framework FFORMA (Feature-based FORecast Model Averaging), which allows weights for forecast combinations to be obtained. An extreme boost gradient algorithm with a custom objective function was used to train a meta-model. Similar to FFORMS, the online part of the algorithm requires calculating the features of a time series and using the pre-trained XGBoost-based meta-learner. In FFORMA, the probabilities of each model being the best are used as weights for computing a combination forecast. FFORMA is slower than FFORMS because the final forecasts of FFORMA is the weighted average of several individual models. The FFORMA approach achieved second position in the M4 competition [@makridakis2018m4]. 
+
+Chapter \ref{ch:paper5}, contributed the use of the efficient Bayesian multivariate surface regression approach to model forecast error as a function of features calculated from the time series. This is termed FFORMPP (Feature-based FORecast Model Performance Prediction). This framework took the correlation structure between forecast errors of different models into the meta-learner training process. FFORMPP allows ranking of the models with respect to their forecast errors and evaluates their relative forecast performance without calculating forecasts from all available individual models in the pool. The rankings of models provide an alternative solution to practitioners who may wish to incorporate their own judgements or expertise into the forecasting process. 
+
+One of the special components of the proposed meta-learning frameworks is augmenting the observed sample with simulated time series. This process may be useful when the number of observed time series is too small to build a reliable meta-learner. Alternatively, one might wish to add more of some particular types of time series to the reference set to achieve a more balanced sample. Chapter \ref{ch:paper2} and Chapter \ref{ch:paper3} explored a use of the model-based approach to simulate time series. The time series were simulated based on ARIMA and ETS models. The second contribution of Chapter \ref{ch:paper5} was to examine the feasibility of using a feature-based time series simulation approach in generating a realistic time series collection to obtain a diverse collection of time series. The chapter explored the use of GRATIS (GeneRAting TIme Series) with diverse and controllable characteristics proposed by @kang2019gratis. 
+
+The third contribution of Chapter \ref{ch:paper5} was the exploration of the instance space defined by features to understand how certain features of the time series influence the forecast model selection. Previous work by @kang2017visualising shows no dense concentration of instances according to the best forecast model of time series; the locations for which models are the best are scattered throughout the instance space. However, according to the results of Chapter \ref{ch:paper5}, dense regions are visible depending on which model is selected as a components of the calculation of combination forecasts. This also indicates that time series are not amenable to a single best forecast model but to a particular set of individual models. This visualisation of instances also follows @wickham2015visualizing's philosophy of 'representation of model in the data space (m-in-ds)'. Displaying the data in the model space (d-in-ms) is the most commonly used approach for model diagnostics, for example, a plot of fitted values versus residuals [@wickham2015visualizing]. m-in-ds is a visualisation of embedding high-dimensional data into a low-dimensional space generated from the model. Visualisation of m-in-ds helps to gain an understanding of the nature of the relationship between features and predicted outcomes. In the context of classification, representation of m-in-ds could be achieved by first, projecting the training data set into meaningful low-dimensional feature space and second visualising the complete prediction regions or their boundaries. In other words, this can be considered the visualisation of predictor space in the context of data space.  
+
+
+A comparison of point forecasts values based on the three frameworks over the M4 competition data is shown in \autoref{forecastsconcl}. For each method, out-of-sample MASE over the forecast horizons was calculated and averaged over all time series. In general, FFORMA, and FFORMPP consistently forecast more accurately than all benchmark methods, except the random walk in daily series. FFORMA and FFORMPP performed equally well for yearly, quarterly and monthly series. For weekly, daily and hourly series, FFORMA provided substantially more accurate forecasts. The FFORMS approach also achieved comparable results in a much more cost- and time-effective manner. It is important to note that FFORMS forecasts are computed based on a single forecasting model (applying individual best forecast model to each series), FFORMA forecasts are computed based on a combination of nine different models and FFORMPP forecasts are computed by taking the median of individual forecasts corresponding to the four models with minimum predicted MASE. Hence, if the focus is to achieve reasonably accurate forecasts in a limited timeline, the FFORMS approach provides a solution. FFORMA is suitable if the aim is to achieve more accurate forecasts and the time and computing budget is not restricted. If the aim is to obtain reasonably accurate forecast using a reasonable time and computing budget, FFORMPP offers a promising solution for yearly, quarterly and monthly series.  \textcolor{black}{The M4 competition winning method, hybrid Exponential Smoothing-Recurrent Neural Network (ES-RNN) approach is a synthesis of exponential smoothing model with advanced Long Short Term Memory (LSTM) neural networks} [@smyl2019hybrid] \textcolor{black}{. The power of Slawek's ES-RNN approach lies in the co-training of both the per-time series exponential smoothing model parameters and the general RNN parameters in the deep learning layer of the architecture. According to} \autoref{forecastsconcl} \textcolor{black}{FFORMS approach outperformed ES-RNN approach for weekly series and FFORMA outperformed the ES-RNN for both weekly and daily series.} \textcolor{black}{A total of six  machine learning-based forecasting algorithms (5 submissions, 1 benchmark method based on MLP: multilayer perceptron) were considered in the M4 competition. These algorithms include simple neural network architectures as well as deep learning neural network architectures. All of them were less accurate than FFORMA and 5 of them were less accurate than FFORMS approach} [@makridakis2019m4] \textcolor{black}{.}
+
+\begin{table}[!h]
+\centering\scriptsize\tabcolsep=0.12cm
+\caption{MASE values calculated over the M4 competition data}
+\label{forecastsconcl}
+\begin{tabular}{l|rrrrrr}
+\hline
+\multicolumn{7}{c}{Point Forecasts (Mean Absolute Scaled Error (MASE))} \\\hline
+ & Yearly & Quarterly & Monthly & Weekly & Daily & Hourly \\\hline
+FFORMS & 3.17 &  1.20 &  0.98&  2.31& 3.57 &  0.84\\
+FFORMA & 3.06 & 1.11 &  0.89& 2.11 & 3.34 & 0.81\\
+FFORMPP & 3.07 & 1.13 &  0.89& 2.46 & 3.62 & 0.96\\\hline
+auto.arima & 3.40 &1.17  &0.93  & 2.55 &  -& - \\
+ets & 3.44 &  1.16& 0.95 &  -&-  &  -\\
+theta & 3.37 &1.24  & 0.97 &2.64  & 3.33 & 1.59 \\
+rwd & 3.07 & 1.33 & 1.18  & 2.68  & 3.25 & 11.45 \\
+rw & 3.97 & 1.48 & 1.21  &2.78  & 3.27 & 11.60 \\
+nn & 4.06 & 1.55 &  1.14 &4.04 & 3.90 & 1.09 \\
+stlar & - & 2.02 &  1.33& 3.15 & 4.49 & 1.49 \\
+snaive & - &  1.66& 1.26 &  2.78& 24.46 & 2.86 \\
+tbats & - & 1.19 &  1.05& 2.49 & 3.27 &  1.30\\
+wn & 13.42 &  6.50&  4.11&  49.91& 38.07 & 11.68 \\
+mstlarima & - & - &  - & - & 3.84 &  1.12\\
+mstlets & - &  - &  - &  - & 3.73 &  1.23\\
+combination (mean) & 4.09 & 1.58 &  1.16&6.96  & 7.94 & 3.93 \\\hline
+M4-1st & 2.98 & 1.12 &  0.88& 2.36 & 3.45 & 0.89\\\hline
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!h]
+\centering\scriptsize\tabcolsep=0.12cm
+\caption{Computational time for producing forecasts based on 100 randomly selected series from each frequency category of the M4 data set.}
+\label{forecasttime}
+{\color{black}\begin{tabular}{l|rrrrrr}
+\hline
+\multicolumn{7}{c}{Computational time for producing forecasts in seconds (IQR)} \\\hline
+ & Yearly & Quarterly & Monthly & Weekly & Daily & Hourly \\\hline
+FFORMS & 3.38 (0.18) & 20.98 (8.23)  &  100.13 (7.13) & 128.41 (5.17)  & 77.20 (5.67) & 34.53 (5.16) \\
+FFORMA & 23.41(0.26) & 144.39 (0.60)& 873.25 (0.32) & 718.68 (5.24) & 886.33 (6.31) & 821.98 (5.42) \\
+FFORMPP & 5.31(0.21) & 30.45 (1.44) & 190.05 (5.15) & 183.36 (6.78) & 93.76 (0.34) & 56.14 (11.67) \\\hline
+auto.arima & 5.91 (0.05)  &  42.11 (2.15)& 448.41 (1.95) & 584.98 (2.35) &  -& - \\
+ets & 1.14 (0.02) & 16.92 (0.09) & 115.50 (0.17) &  -&-  &  -\\
+theta & 2.74 (2.48) & 10.15 (11.45) & 29.13 (1.15) & 96.06 (0.42) & 83.77 (2.67) & 54.32 (2.32) \\
+rwd & 0.29 (5.42) & 0.29 (8.20) & 0.33 (15.57)  & 0.34 (21.78)  & 0.41 (33.72)  & 0.37 (26.46) \\
+rw & 0.16 (4.65) & 0.20 (6.67) & 0.26 (15.68)   & 0.22 (17.16) &0.27 (19.56)  & 0.24 (9.58)\\
+nn & 2.32 (0.14) & 6.54 (0.23) & 32.78(0.25) &281.68 (0.61) & 424.28 (1.71) & 354.97 (3.61) \\
+stlar & - & 0.83 (17.97) & 0.94 (12.03) & 0.90 (10.11) & 2.21 (0.12) & 1.70 (0.01) \\
+snaive & - & 0.18 (4.51) & 0.30 (3.12) & 0.20 (1.44) & 0.32 (0.34) & 0.44 (2.12) \\
+tbats & - & 20.16 (6.98) & 38.12 (2.44) & 40.16 (3.36) & 68.73 (0.65) & 49.52 (2.98) \\
+wn & 0.19 (2.65) & 0.20 (4.30) & 0.23 (0.08) & 0.19 (4.51) & 0.26 (1.00) & 0. 22 (0.05) \\
+mstlarima & - & - &  - & - & 86.92 (0.52) & 30.60 (0.17) \\
+mstlets & - &  - &  - &  - & 19.79 (0.09) & 10.13 (0.48)\\\hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[!h]
+\centering\scriptsize\tabcolsep=0.12cm
+\caption{Computational time for features over 100 time series.}
+\label{featuretime}
+{\color{black}\begin{tabular}{lll|r}
+\hline
+\thead{Feature category \\ (as in "tsfeatures" \\ package)}        & \multicolumn{1}{l}{Feature} & Description &  \thead{Computational time \\ (median/(IQR))}                 \\ \hline
+                 & \multicolumn{1}{l}{T} & length of time series &           47 (3) nanoseconds        \\ \hline
+\multirow{12}{*}{stl\_features } &            trend           & strength of trend  & \multirow{12}{*}{862.45 (5.27) milliseconds} \\
+                   &            seasonality           & strength of seasonality  &                    \\
+                   &      linearity                 & linearity &                    \\
+                   &          curvature             & curvature &                    \\
+                   &          spikiness             & spikiness &                    \\
+                   &      e\_acf1                 & first ACF value of remainder series &                    \\
+      &           e\_acf10            & sum of first 10 ACF value of remainder series &                    \\
+                   &      peak                 & strength of peak &                    \\
+                   &     nperiods                  & number of seasonal periods in the series &                    \\
+                   &          trough             & strength of trough &                    \\
+                   &           seasonal\_period            & length of seasonal period &                    \\\hline
+    hurst               & \multicolumn{1}{l}{hurst } & Hurst exponent  &    83.31 (4.79) milliseconds               \\ 
+      stability             & \multicolumn{1}{l}{stability} & stability &      80.24 (4.16) milliseconds             \\ 
+      lumpiness             & \multicolumn{1}{l}{lumpiness} & lumpiness &    154.22 (2.08) milliseconds               \\ 
+      entropy             & \multicolumn{1}{l}{entropy} & spectral entropy &    247.57 (5.31) milliseconds              \\ 
+     nonlinearity              & \multicolumn{1}{l}{nonlinearity} & nonlinearity &  255.57 (2.53) milliseconds                 \\ \hline
+\multirow{2}{*}{holt\_parameters}  & \multicolumn{1}{l}{alpha} & ETS(A,A,N) $\hat\alpha$ & \multirow{2}{*}{367.50 (6.84) milliseconds}  \\ 
+                   & \multicolumn{1}{l}{beta} & ETS(A,A,N) $\hat\beta$   &                    \\ \hline
+\multirow{3}{*}{hw\_parameters}  & \multicolumn{1}{l}{hwalpha} & ETS(A,A,A) $\hat\alpha$   & \multirow{3}{*}{4.89 (0.08) seconds}  \\ 
+                   & \multicolumn{1}{l}{hwbeta} & ETS(A,A,A) $\hat\beta$  &                    \\
+                   & \multicolumn{1}{l}{hwgamma} & ETS(A,A,A) $\hat\gamma$  &                    \\ \hline
+    unitroot\_pp               & \multicolumn{1}{l}{ur\_pp} & test statistic based on Phillips-Perron test  &           174.44 (1.66) milliseconds      \\ 
+ unitroot\_kpss                  & \multicolumn{1}{l}{ur\_kpss} & ur\_kpss &  66.44 (4.25) milliseconds                  \\ \hline
+\multirow{7}{*}{acf\_features}  & \multicolumn{1}{l}{y\_acf1} & first ACF value of the original series   & \multirow{7}{*}{255.23 (3.85) milliseconds }  \\
+                   & \multicolumn{1}{l}{y\_acf10 } & sum of squares of first 10 ACF values of original series  &                    \\ 
+                   & \multicolumn{1}{l}{diff1y\_acf1} & first ACF value of the differenced series  &                    \\ 
+                   & \multicolumn{1}{l}{diff1y\_acf10 } &sum of squares of first 10 ACF values of differenced series   &                    \\ 
+                   & \multicolumn{1}{l}{diff2y\_acf1} & first ACF value of the twice-differenced series &                    \\ 
+                   & \multicolumn{1}{l}{diff2y\_acf10} & sum of squares of first 10 ACF values of &                    \\ 
+                   & \multicolumn{1}{l}{seas\_acf1} & autocorrelation coefficient at first seasonal lag &                    \\ \hline
+            & \multicolumn{1}{l}{ lmres\_acf1} & first ACF value of residual series of linear trend model  &        50.21 (2.34) milliseconds            \\ \hline
+\multirow{5}{*}{pacf\_features}  & \multicolumn{1}{l}{y\_pacf5} & sum of squares of first 5 PACF values of original series & \multirow{5}{*}{313.39 (5.73) milliseconds }  \\ 
+                   & \multicolumn{1}{l}{diff1y\_pacf5} & sum of squares of first 5 PACF values of differenced series &                    \\ 
+                   & \multicolumn{1}{l}{diff2y\_pacf5} & sum of squares of first 5 PACF values of twice-differenced series  &                    \\ 
+                   & \multicolumn{1}{l}{seas\_pacf} & partial autocorrelation coefficient at first seasonal lag  &                    \\  \hline
+crossing\_points                   & \multicolumn{1}{l}{crossing\_points} & number of times the time series crosses the median &   26.73 (2.62) milliseconds                \\
+  arch\_stat                 & \multicolumn{1}{l}{ARCH.LM} & ARCH LM statistic & 135.47 (3.26) milliseconds                  \\ \hline
+   heterogeneity                & \multicolumn{1}{l}{arch\_acf} & sum of squares of the first 12 autocorrelations of $z^2$ &     441.63 (6.04) milliseconds              \\ 
+\multirow{4}{*}{}  & \multicolumn{1}{l}{garch\_acf} & sum of squares of the first 12 autocorrelations of $r^2$ & \multirow{4}{*}{}  \\ 
+                   & \multicolumn{1}{l}{arch\_r2} & $R^2$
+                   value of an AR model applied to $z^2$ &                    \\ 
+                   & \multicolumn{1}{l}{garch\_r2} & $R^2$
+                   value of an AR model applied to $r^2$ &                    \\ \hline
+\end{tabular}}
+\end{table}
+
+One limitation of the analysis is that it does  not report the computational time owing to different platforms used to run the frameworks. However, all three frameworks are scalable both in time and computing costs. Further, all three frameworks can be easily parallelised for a given computing budget by dividing the process into separate steps. \textcolor{black}{To ensure a fair comparison, computational time for producing forecasts based on 100 randomly selected series from each frequency category of the M4 competition data set is given in} \autoref{forecasttime} \textcolor{black}{The reported values are median elapsed time of 100 replicates. The corresponding Inter Quartile Ranges (IQRs) are given in parentheses.} \autoref{featuretime} \textcolor{black}{reported the computational time for features. None of the features are computationally demanding.} \textcolor{black}{The computational time was measured using the R package microbenchmark} [@microbenchmark] \textcolor{black}{on 24 core Xeon-E5-2680-v3 @ 2.50GHz servers.}  
+
+\textcolor{black}{According to Table 4 in Chapter} \ref{ch:paper2}  \textcolor{black}{and Table 7 in Chapter} \ref{ch:paper5}\textcolor{black}{, the most accurate forecast models are the ones most frequently get selected by the meta-learners. For example, according to} \autoref{forecastsconcl} \textcolor{black}{the random walk with drift performs extremely well with yearly series. According to Table 4 in Chapter} \ref{ch:paper2} \textcolor{black}{random walk with drift has been selected 46.75\% of times by FFORMS and according to Table 7 in Chapter} \ref{ch:paper5} \textcolor{black}{the random walk with drift has been selected as one of the components in calculating combination forecasts for all series by FFORMPP. The interpretations for other frequency categories can be made in a similar fashion. Further, across all frequency categories white noise process was the least selected forecast model and according to } \autoref{forecastsconcl} \textcolor{black}{it was the worst performing model across all frequency categories. Since, white noise process turned out to be the least accurate, it was not considered as a base model to the algorithm space of FFORMA. This helped to reduce the computing time while maintaining its high accuracy. Hence, prior knowledge about the forecast accuracy of based models can be used to reduce the number of models to be used in the algorithm space. This will intern speed up the both online and offline phases of the classification  process without losing too much information.} 
+
+\textcolor{black}{In our algorithms we use a large sample of time series to create a reference set for training the meta-learners. Since the processing of data to create the reference set is done in the off-line phase of the algorithms, the computational time is of no real consequence.  However, it could be the case that the meta-learner should be re-trained once in a while. For example, that could happen in a retail company where the meta-learner is trained with its own data to forecasts the sales of its own products which features may significantly change over time. In order to get an idea about when and how often the re-training process should be done, two-dimensional instance space, defined by the features could be used. For that, we first compute the principal components projection using the features in the reference set, and then project the new time series to the same low-dimensional feature space. If the new time series falls within the space covered by the series in the reference set a new meta-learner is not required. If any of the series fall out-side of the space covered by the reference set a new-meta learner is required to train.}
+
+\textcolor{black}{One could argue in FFORMS algorithm, the random forest probability scores  could be used for weighting alternative forecast models and construct a robust combination scheme like FFORMA. However, this approach did not bring any improvement in the performance and even more with some series it degraded the performance. The reason is, in FFORMS the forecast model selection problem is treated as a classification problem. Hence, in this case the weights are mostly close to either 0 and 1; the best model has a weight close to 1 and others very close to 0. For example, suppose for a given series forecast error vector for random walk, random walk with drift and white noise process is [1.31, 1.30, 3.4]. Then, ideally vector of class weight we expect from FFORMS approach is [0, 1, 0], the best model was given class probability 1 and others 0. This limitation motivates us to introduce FFORMA. In forecast-combination we would expect similar weights for random walk with drift and random walk as they perform equally well. For this, in the objective function of FFORMA, instead of minimizing classification error we minimize average forecast error to obtain suitable weights for forecast combination.} \textcolor{black}{In FFORMPP we opt for simplicity, the median of best four models are used to compute combination forecast. Furthermore,} @lichtendahl2013better \textcolor{black}{claim that a simpler method
+of averaging the quantiles seems give as good results as more elaborate ones. This helps to reduce the computational time while maintaining the accuracy.}
+
+\textcolor{black}{All our frameworks are robust to outliers present in the time series. Furthermore, except the feature Spectral Entropy all other features do not affected by the missing values present in the series. For the case of Spectral Entropy calculations snaive/naive approach is used to impute missing values, before computing the feature. However, both the feature space and algorithm space will depend on the specific population of time series models we need to forecast. Hence, limitation of these frameworks is expert's knowledge is needed to decide the models to be included in the algorithm space and the features to be included in the feature space.}
+
+## Software development and research reproducibility
+
+### Software
+
+Two R packages were developed based on the frameworks introduced in this thesis. 
+
+1. The first R package `seer` is an accompaniment to the framework proposed in Chapter \ref{ch:paper2}.
+The package is available at https://github.com/thiyangt/seer. To the best of my knowledge `seer` is the first R package to implement the meta-learning framework for time series forecasting.
+
+2. The second R package, `fformpp`, is an accompaniment to the framework proposed in Chapter \ref{ch:paper5}. The package is available at https://github.com/thiyangt/fformpp.
+
+
+### Reproducibility
+
+@peng2015reproducibility writes,
+
+> "Reproducibility is defined as the ability to recompute data analytic results, given an observed
+data set and knowledge of the data analysis pipeline. Replicability and reproducibility are two
+foundational characteristics of a successful scientific research enterprise."
+
+Research reproducibility is an important component for research sustainability. The R codes to reproduce all results and figures of each paper are available in the following Github repositories. 
+
+Chapter \ref{ch:paper2}: https://github.com/thiyangt/WorkingPaper1
+
+Chapter \ref{ch:paper3}: https://github.com/thiyangt/FFORMSinterpretation. Further, the R package `explainer` contains the main functionalities used to generate partial dependence plots is available at https://github.com/thiyangt/explainer
+
+Chapter \ref{ch:paper4}: https://github.com/robjhyndman/fforma-paper
+
+Chapter \ref{ch:paper5}: https://github.com/thiyangt/FFORMPP-workingpaper
+
+The R codes to reproduce the content of this PhD this are available at https://github.com/thiyangt/PhDThesis
+
+For all papers, `Rmarkdown` was used to produce a readable output file, supported by the `rmarkdown`, `knitr` and `pander` packages. The R package `bookdown` was used to produce a readable output file of this PhD thesis with the support of the Monash University PhD thesis template available at https://github.com/robjhyndman/MonashThesis.
+
+
+## Future directions
+
+The results clearly demonstrate that features of time series are useful in identifying suitable models for forecasting. There are several directions for future research.
+
+1. *Application to other datasets.*  \textcolor{black}{The current applications are limited to M1, M3 and M4 competition datasets. Therefore, the applicability of proposed frameworks is limited to groups of time series of similar attributes as the M-competition data. For example, the proposed frameworks with the same set of features and forecast models might not be the right choice for forecasting stock return data, irregular time series, etc. Hence, it is important to expand the frameworks to other datasets that come from different application domains. When adapting the frameworks to other applications the feature space should be revised with appropriate features that measure characteristics of interest. The algorithm space should be revised with suitable forecast models. A suitable forecast error metric should also be considered to evaluate the performance of different forecast models. For example, retail companies collect large numbers of time series related to sales data. Most of these series are intermittent time series} [@seaman2018considerations]. \textcolor{black}{Low-volume and intermittent time series were not included in the M-competition repository} [@makridakis2019m4].  \textcolor{black}{Hence, new features such as proportion of zeros, number of non-zero interval, kurtosis need to be considered to the feature space. The use of forecast error metrics such as sMAPE with intermittent series is not possible because it would involve division by zero. Furthermore, none of the time series in the M-competition collections have negative values in the series clearly not representative of any stock return series. The new features need to be included when adapting the frameworks to stock return series. In addition to the new features new forecast model such as ARCH, GARCH, etc. need to be considered for the algorithm space.} 
+
+    @smith2015generating  \textcolor{black}{pointed out the importance of evaluating meta-frameworks using simulated time series with different distributions in the feature space to achieve a better understanding of strengths and weaknesses of algorithms. Hence, in addition to the application of these frameworks to real-world data sets, the GRATIS} [@kang2019gratis] \textcolor{black}{approach can be used to create a test bed with controllable features of the instances to evaluate the frameworks. An illustrative example of the idea is shown in Figure} \ref{fig:example}\textcolor{black}{.First the features of yearly M3 series are computed. Then principal component analysis is used to project them all onto a two-dimensional space which is referred to as "instance space".  The green points correspond to the yearly time series from the M3 competition. The orange points are the target points. The rules learned by a meta-learner trained based on the green points do not claim to be universally applicable, they merely hold for time series with similar feature distribution as M3 data. Hence, to make the meta-learner more generalizable we need a more diverse collection of time series that fill and spread out the instance space. For this, the GRATIS approach can be used to   generate new time series from the target points. Note that it is not possible to generate time series from some target points due to natural constraints in feature combinations}[@kang2017visualising]\textcolor{black}{. According to the no free lunch theorem, there is no algorithm that performs best for all kinds of problems. Hence, the application of the frameworks to simulated time  series with controllable features will help the understanding of when these frameworks perform well and when they fail. This will provide a valuable insight to improve the generalisability of the frameworks.}
+
+```{r example, fig.cap="Instance space of yearly M3 time series. PC1 and PC2 are the first two principal components, projected from the features of the yearly M3 time series. The green points are the yearly M3 time series and the orange points are the target points.",dev=c('pdf'), fig.pos="h"}
+
+```
+
+\newpage
+
+2. *Feature set.* Another important direction for future work is to investigate spectral-domain time series features such as wavelet transform-based features of the time series and spectral density-based features. \textcolor{black}{For example, number of peaks in the global wavelet power spectrum, standard deviation of the wavelet coefficients, etc. It is important to test whether these features would lead to better results for any of the algorithms.}
+
+3. \textcolor{black}{\textit{Feature engineering for meta-learning.} The choice of time series features used in the thesis was rather adhoc in nature and developed mostly based on intuitions.} \textcolor{black}{In Chapter} \ref{ch:paper3} \textcolor{black}{, I have done a throught empirical exploration of features to understand how different features and their interactions affect the choice of forecast model.  Identification of a good feature subset is an important component in the meta-learning process, as all our algorithms depend crucially on finding features that enable identification of the best forecast model for the given time series.  A good set of features will not only speed up the calculation process, they will help to obtain even better results. Hence, further research is needed to answer the following challenges confronting when designing a meta-learning framework.}
+
+      \textcolor{black}{3.1: Do we need to add more features? The frameworks introduced in the thesis considered a pool of more than 30 features, but still,  are these enough? How much information is lost by considering only these features? Is there any possible way to measure the complete information provided by a time series and therefore, to measure the information we miss by using a subset of features to capture it?}
+    
+    \textcolor{black}{ 3.2: Do we need all the features used in the frameworks? Would it be possible to achieve similar accuracy level by selecting a subset of features? The second question is the opposite of the first question.}
+    
+    \textcolor{black}{At the same time, the number of features considered will influence the choice of algorithm use for training. For example, if a single decision tree is considered, then the use of 30 features is probably ineffective as the algorithm is too simplistic to model the connection between forecast model performance and features.  However, the algorithms such as random forest, deep-learning architectures can effectively model such complex relationships. Hence, further research is needed to explore if feature engineering process would lead to better results for any of these algorithms in terms of accuracy as well as time.}
+    
+    
+4. \textcolor{black}{\textit{Meta-learner training process.} An important component of a meta-learning framework is the construction of an engine that maps an input space composed of features to an output space composed of forecast model performance. Another direction to investigate could be to replace the training algorithm with other alternative such as deep-learning architectures, support vector machines, etc. and test whether these approaches would outperform the frameworks FFORMS, FFORMA and FFORMPP.}
+
+5. *Probabilistic forecasting.* \textcolor{black}{An interesting extension would be to apply this methodology for producing probabilistic forecasts rather than point forecasts. To account for this, instead of using MASE as the error measure in the offline phase, it could be replaced by scale-free scoring rule such as log scores and retrain a meta-learner for probabilistic forecasting.}
+
+6. *Fast and furious forecasting.* Another strand of research would allow for clustering of time series, with a similar forecasting model being applied to all series within a cluster. In this way, the number of models to be estimated can be greatly reduced. However, the approach would lead to a loss of efficiency in using non-optimal parameters, and additional variance might be incurred from potentially selecting a non-optimal forecasting method for a given series. It is important to explore how to balance these effects against the speed improvements that are achieved.
+
