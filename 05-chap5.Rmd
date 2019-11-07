@@ -1,8 +1,0 @@
----
-chapter: 5
-knit: "bookdown::render_book"
----
-
-# FFORMPP: Feature-based forecast model performance prediction {#ch:paper5}
-
-\includepdf[pages={1-29}, scale=1]{WorkingPaper4.pdf}

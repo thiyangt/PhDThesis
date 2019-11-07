@@ -1,8 +1,0 @@
----
-chapter: 3
-knit: "bookdown::render_book"
----
-
-# Peeking inside FFORMS: Feature-based forecast model selection {#ch:paper3}
-
-\includepdf[pages={1-45}, scale=1]{WorkingPaper2.pdf}

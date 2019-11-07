@@ -1,8 +1,0 @@
----
-chapter: 2
-knit: "bookdown::render_book"
----
-
-# Meta-learning how to forecast time series {#ch:paper2}
-
-\includepdf[pages={1-31}, scale=1]{WorkingPaper1.pdf}
