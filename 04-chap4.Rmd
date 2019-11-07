@@ -1,0 +1,8 @@
+---
+chapter: 4
+knit: "bookdown::render_book"
+---
+
+# FFORMA: Feature-based forecast model averaging {#ch:paper4}
+
+\includepdf[pages={1-7}, scale=1]{WorkingPaper3.pdf}

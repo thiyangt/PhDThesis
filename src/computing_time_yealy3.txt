@@ -1,0 +1,67 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # yearly data time to compute forecasts
+> 
+> # pkges
+> library(forecast)
+> library(forecTheta)
+> library(seer)
+> library(microbenchmark)
+> library(randomForest)
+> 
+> # data
+> load("dataThesis/yearly_subset.rda")
+> 
+> ## fforms - without forecasts
+> load("phdproject2/rfu_m4yearly.rda")
+> rf <- rfu_m4yearly$randomforest
+> fforms_ts_noforecast <- function(){
++   featureCal <- cal_features(yearly_subset, database = "M4", h=6, highfreq = FALSE)
++   predModels <- predict(rfu_m4yearly, featureCal)
++   
++ }
+> 
+> microbenchmark(fforms_ts_noforecast(), times=100)
+Unit: seconds
+                   expr      min       lq     mean   median       uq      max
+ fforms_ts_noforecast() 10.02795 10.05284 10.09036 10.06828 10.09063 10.74818
+ neval
+   100
+> 
+> ## fforms - with forecasts
+> load("phdproject2/rfu_m4yearly.rda")
+> rf <- rfu_m4yearly$randomforest 
+> 
+> fforms_ts <- function(){
++   featureCal <- cal_features(yearly_subset, database = "M4", h=6, highfreq = FALSE)
++   predModels <- predict(rfu_m4yearly, featureCal)
++   forecastFFORMS <- rf_forecast(predictions = predModels, tslist = yearly_subset,
++                                 database = "M4",
++                                 function_name = "cal_MASE",
++                                 h=6,
++                                 accuracy = FALSE)
++ 
++ }
+> 
+> microbenchmark(fforms_ts(), times=100)
+Unit: seconds
+        expr      min       lq     mean  median       uq      max neval
+ fforms_ts() 72.63194 72.82509 74.55448 72.9306 77.51525 78.10881   100
+> 

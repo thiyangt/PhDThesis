@@ -1,0 +1,121 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # weekly data time to compute forecasts
+> 
+> # pkges
+> library(forecast)
+> library(forecTheta)
+> library(seer)
+> library(microbenchmark)
+> library(randomForest)
+> 
+> # data
+> load("dataThesis/weekly_subset.rda")
+> 
+> 
+> ## rw
+> rw_ts_w <- function(){
++   lapply(weekly_subset, function(temp){
++     rw_fit <- rwf(temp$x, drift=FALSE, h=13)
++   })
++   
++ }
+> microbenchmark(rw_ts_w(), times=100)
+Unit: milliseconds
+      expr      min       lq     mean   median     uq      max neval
+ rw_ts_w() 204.1162 213.0824 222.4847 221.1489 230.24 309.8333   100
+> 
+> ## rwd
+> rwd_ts_w <- function(){
++   lapply(weekly_subset, function(temp){
++     rwd_fit <- rwf(temp$x, drift=TRUE, h=13)
++   })
++   
++ }
+> microbenchmark(rwd_ts_w(), times=100)
+Unit: milliseconds
+       expr      min       lq     mean   median       uq      max neval
+ rwd_ts_w() 317.2694 331.7261 349.4188 341.1801 353.0468 715.3698   100
+> 
+> ## wn
+> wn_ts_w <- function(){
++   lapply(weekly_subset, function(temp){
++     wn_fit <- mean(temp$x)
++     forecastWN <- rep(wn_fit, 13)
++   })
++   
++ }
+> microbenchmark(wn_ts_w(), times=100)
+Unit: microseconds
+      expr    min      lq     mean   median       uq      max neval
+ wn_ts_w() 965.08 987.957 1081.338 1003.011 1113.807 4932.041   100
+> 
+> ## theta
+> theta_ts_w <- function(){
++   m=52
++ lapply(weekly_subset, function(temp){
++     length_training <- length(temp$x)
++     training <- temp$x
++       if (m > 1 & length_training > (2*m)){
++         # using stheta method with seasonal adjustment
++         # require(forecTheta)
++           forecastTheta <- forecTheta::stheta(training,h=13, s='additive')$mean
++       } else if (m > 1 & length_training <= (2*m)) {
++         # using thetaf method
++         forecastTheta <- forecTheta::dotm(training,h=13)$mean
++       } else {
++         # using thetaf method
++         forecastTheta <-forecast::thetaf(training,h=13)$mean
++       }
++      
++   })
++   
++ }
+> 
+> microbenchmark(theta_ts_w(), times=100)
+Unit: seconds
+         expr      min       lq    mean   median       uq      max neval
+ theta_ts_w() 95.72551 95.92492 96.3072 96.06124 96.14889 101.6596   100
+> 
+> ## nn
+> nn_ts_w <- function(){
++   lapply(weekly_subset, function(temp){
++     nn_fit <- nnetar(temp$x)
++     forecastETS <- forecast(nn_fit, 13)
++   })
++   
++ }
+> 
+> microbenchmark(nn_ts_w(), times=100)
+Unit: seconds
+      expr      min       lq     mean   median       uq      max neval
+ nn_ts_w() 280.5325 281.4071 281.7913 281.6803 282.0167 284.1478   100
+> 
+> ## auto.arima
+> arima_ts_w <- function(){
++   lapply(weekly_subset, function(temp){
++     arima_fit <- auto.arima(temp$x)
++     forecastETS <- forecast(arima_fit, 13)
++   })
++   
++ }
+> 
+> microbenchmark(arima_ts_w(), times=100)
+slurmstepd: error: *** JOB 4818650 ON hs02 CANCELLED AT 2019-10-07T09:51:10 DUE TO TIME LIMIT ***

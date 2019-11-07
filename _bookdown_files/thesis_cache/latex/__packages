@@ -1,0 +1,15 @@
+base
+forecast
+ggplot2
+knitr
+tidyverse
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+tsfeatures
+Mcomp
+seer

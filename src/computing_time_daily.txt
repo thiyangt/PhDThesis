@@ -1,0 +1,148 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # daily data time to compute forecasts
+> 
+> # pkges
+> library(forecast)
+> library(forecTheta)
+> library(seer)
+> library(microbenchmark)
+> library(randomForest)
+> 
+> # data
+> load("dataThesis/daily_subset.rda")
+> 
+> ### Convert daily time series to multiple frequency
+> 
+> dailym4_msts <- lapply(daily_subset, function(temp){
++   temp$x <- convert_msts(temp$x, "daily")
++   return(temp)
++ })
+> 
+> ## rw
+> rw_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     rw_fit <- rwf(temp$x, drift=FALSE, h=14)
++   })
++   
++ }
+> microbenchmark(rw_ts_d(), times=100)
+Unit: milliseconds
+      expr      min       lq     mean   median       uq      max neval
+ rw_ts_d() 251.2381 268.7988 280.8694 277.6522 288.3521 371.0723   100
+> 
+> ## rwd
+> rwd_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     rwd_fit <- rwf(temp$x, drift=TRUE, h=14)
++   })
++   
++ }
+> microbenchmark(rwd_ts_d(), times=100)
+Unit: milliseconds
+       expr      min       lq   mean   median       uq      max neval
+ rwd_ts_d() 387.2448 408.1469 437.83 419.8065 441.8625 614.8649   100
+> 
+> ## wn
+> wn_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     wn_fit <- mean(temp$x)
++     forecastWN <- rep(wn_fit, 14)
++   })
++   
++ }
+> microbenchmark(wn_ts_d(), times=100)
+Unit: milliseconds
+      expr      min      lq     mean   median       uq      max neval
+ wn_ts_d() 1.264093 1.31491 1.398084 1.338985 1.373144 5.331163   100
+> 
+> 
+> 
+> ## nn
+> nn_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     nn_fit <- nnetar(temp$x)
++     forecastETS <- forecast(nn_fit, 14)
++   })
++   
++ }
+> 
+> microbenchmark(nn_ts_d(), times=100)
+Unit: seconds
+      expr      min       lq     mean   median       uq      max neval
+ nn_ts_d() 421.6318 423.5404 424.3677 424.2851 425.2518 427.9714   100
+> 
+> 
+> 
+> ## stlar
+> stlar_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     forecastSTLAR <- stlar(temp$x, 14)
++   })
++   
++ }
+> 
+> microbenchmark(stlar_ts_d(), times=100)
+Unit: seconds
+         expr      min      lq     mean  median       uq      max neval
+ stlar_ts_d() 2.094579 2.15861 2.223114 2.21894 2.275536 2.467932   100
+> 
+> ## mstlets
+> 
+> mstlets_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     fit_stlf <- forecast::stlf(temp$x, method="ets")
++     forecastMSTL <- forecast(fit_stlf, h=14)$mean
++   })
++   
++ }
+> 
+> microbenchmark(mstlets_ts_d(), times=100)
+Unit: seconds
+           expr      min       lq     mean   median       uq      max neval
+ mstlets_ts_d() 19.71204 19.77505 19.85856 19.79963 19.86124 20.77153   100
+> 
+> ## mstlarima
+> mstlarima_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     fit_stlf <- forecast::stlf(temp$x, method="arima")
++     forecastMSTL <- forecast(fit_stlf, h=14)$mean
++   })
++   
++ }
+> 
+> microbenchmark(mstlarima_ts_d(), times=100)
+Unit: seconds
+             expr      min       lq     mean   median       uq      max neval
+ mstlarima_ts_d() 86.18149 86.56675 86.92398 86.98491 87.08813 88.25272   100
+> 
+> 
+> 
+> ## tbats
+> tbats_ts_d <- function(){
++   lapply(dailym4_msts, function(temp){
++     fit_tbats <- tbats(temp$x)
++     forecast_tbats <- forecast(fit_tbats, h=14)
++   })
++   
++ }
+> 
+> microbenchmark(tbats_ts_d(), times=100)
+slurmstepd: error: *** JOB 4818652 ON hs03 CANCELLED AT 2019-10-07T09:57:48 DUE TO TIME LIMIT ***

@@ -1,0 +1,161 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## Feature calculation run on cluster
+> library(tsfeatures)
+> library(microbenchmark)
+> 
+> ## ---- individual feature computing time
+> load("dataThesis/quarterly_subset.rda")
+> qs_values <- lapply(quarterly_subset, function(temp){temp$x})
+> 
+> ## running time of the feature length
+> length_time <- lapply(qs_values, function(temp){length(temp)})
+> length_runningTime <- microbenchmark(length_time, times=100)
+> length_runningTime
+Unit: nanoseconds
+        expr min lq   mean median uq  max neval
+ length_time  39 45 101.82     47 48 5510   100
+> # e_acf1 = lmres_acf1
+> tsfeatures_features <- c("acf_features", "arch_stat", "crossing_points", "entropy",
++                          "flat_spots", "holt_parameters", "hw_parameters", "hurst", "lumpiness",
++                          "nonlinearity", "pacf_features", "stability", "stl_features", "unitroot_kpss",
++                          "unitroot_pp", "heterogeneity")
+> 
+> ff <- function(temp){tsfeatures(qs_values, temp)}
+> feature_time <- list()
+> n <- length(tsfeatures_features)
+> for (i in 1:n)
++ {
++   feature_time[[i]] <- microbenchmark(ff(tsfeatures_features[i]), times=100)
++ }
+> feature_time
+[[1]]
+Unit: milliseconds
+                       expr      min       lq    mean   median       uq     max
+ ff(tsfeatures_features[i]) 248.9138 253.5433 259.191 255.2393 257.3954 403.309
+ neval
+   100
+
+[[2]]
+Unit: milliseconds
+                       expr      min       lq    mean   median       uq
+ ff(tsfeatures_features[i]) 129.2326 133.7651 135.947 135.4797 137.0246
+      max neval
+ 161.1222   100
+
+[[3]]
+Unit: milliseconds
+                       expr     min       lq     mean  median       uq      max
+ ff(tsfeatures_features[i]) 26.3438 26.54017 29.24975 26.7313 29.16729 165.2257
+ neval
+   100
+
+[[4]]
+Unit: milliseconds
+                       expr      min       lq   mean   median       uq      max
+ ff(tsfeatures_features[i]) 241.4354 244.2262 261.78 247.5747 249.5357 758.8599
+ neval
+   100
+
+[[5]]
+Unit: milliseconds
+                       expr     min       lq    mean   median       uq      max
+ ff(tsfeatures_features[i]) 26.1712 27.02632 28.2985 27.58518 27.97048 38.74578
+ neval
+   100
+
+[[6]]
+Unit: milliseconds
+                       expr      min       lq   mean   median       uq      max
+ ff(tsfeatures_features[i]) 355.3061 362.5787 369.52 367.5095 369.4197 516.1454
+ neval
+   100
+
+[[7]]
+Unit: seconds
+                       expr      min       lq     mean   median       uq
+ ff(tsfeatures_features[i]) 4.863878 4.877367 4.925162 4.890392 4.955634
+      max neval
+ 5.372414   100
+
+[[8]]
+Unit: milliseconds
+                       expr      min       lq    mean   median      uq      max
+ ff(tsfeatures_features[i]) 82.62612 83.00966 93.6958 83.31271 87.7985 380.5066
+ neval
+   100
+
+[[9]]
+Unit: milliseconds
+                       expr     min      lq    mean   median       uq      max
+ ff(tsfeatures_features[i]) 151.357 153.181 156.167 154.2207 155.2609 294.9367
+ neval
+   100
+
+[[10]]
+Unit: milliseconds
+                       expr      min       lq     mean   median       uq
+ ff(tsfeatures_features[i]) 248.6326 254.1895 255.8785 255.5704 256.7128
+      max neval
+ 289.8948   100
+
+[[11]]
+Unit: milliseconds
+                       expr      min       lq     mean   median       uq
+ ff(tsfeatures_features[i]) 304.8628 310.9582 324.7222 313.3974 316.6852
+      max neval
+ 638.4531   100
+
+[[12]]
+Unit: milliseconds
+                       expr      min       lq     mean   median       uq
+ ff(tsfeatures_features[i]) 76.46294 77.64146 81.61697 80.24289 81.80599
+      max neval
+ 218.2683   100
+
+[[13]]
+Unit: milliseconds
+                       expr      min       lq     mean   median       uq
+ ff(tsfeatures_features[i]) 847.4037 860.6602 873.3335 862.4513 865.9333
+      max neval
+ 1122.305   100
+
+[[14]]
+Unit: milliseconds
+                       expr      min       lq     mean   median      uq
+ ff(tsfeatures_features[i]) 65.27107 66.62994 69.63049 67.44643 70.8717
+      max neval
+ 115.5833   100
+
+[[15]]
+Unit: milliseconds
+                       expr      min       lq     mean   median       uq
+ ff(tsfeatures_features[i]) 168.2231 173.4674 175.3067 174.4489 175.1239
+      max neval
+ 315.9089   100
+
+[[16]]
+Unit: milliseconds
+                       expr      min       lq     mean   median       uq
+ ff(tsfeatures_features[i]) 430.1074 437.0379 443.7536 441.6346 443.0788
+      max neval
+ 597.3279   100
+
+> 

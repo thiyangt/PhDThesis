@@ -1,0 +1,164 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # quarterly data time to compute forecasts
+> 
+> # pkges
+> library(forecast)
+> library(forecTheta)
+> library(seer)
+> library(microbenchmark)
+> library(randomForest)
+> 
+> # data
+> load("dataThesis/quarterly_subset.rda")
+> 
+> 
+> ## rw
+> rw_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     rw_fit <- rwf(temp$x, drift=FALSE, h=8)
++   })
++   
++ }
+> microbenchmark(rw_ts_q(), times=100)
+Unit: milliseconds
+      expr      min       lq     mean   median       uq      max neval
+ rw_ts_q() 191.0421 199.0601 203.4585 201.9775 205.7336 273.0429   100
+> 
+> ## rwd
+> rwd_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     rwd_fit <- rwf(temp$x, drift=TRUE, h=8)
++   })
++   
++ }
+> microbenchmark(rwd_ts_q(), times=100)
+Unit: milliseconds
+       expr      min       lq    mean   median       uq      max neval
+ rwd_ts_q() 288.9162 294.5558 299.596 298.0359 302.7539 346.1627   100
+> 
+> ## wn
+> wn_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     wn_fit <- auto.arima(temp$x, d=0, D=0, max.p=0, max.q=0, max.Q=0, max.P=0)
++     forecastWN <- forecast(wn_fit, 8)
++   })
++   
++ }
+> microbenchmark(wn_ts_q(), times=100)
+Unit: milliseconds
+      expr      min       lq     mean   median       uq      max neval
+ wn_ts_q() 947.9075 973.4775 994.2421 991.4608 1005.011 1196.639   100
+> 
+> 
+> ## nn
+> nn_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     nn_fit <- nnetar(temp$x)
++     forecastETS <- forecast(nn_fit, 8)
++   })
++   
++ }
+> 
+> microbenchmark(nn_ts_q(), times=100)
+Unit: seconds
+      expr      min      lq     mean   median       uq      max neval
+ nn_ts_q() 6.378591 6.48343 6.552698 6.547288 6.604606 6.880059   100
+> 
+> ##  ets
+> 
+> ets_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     ets_fit <- ets(temp$x)
++     forecastETS <- forecast(ets_fit, 8)
++   })
++   
++ }
+> 
+> microbenchmark(ets_ts_q(), times=100)
+Unit: seconds
+       expr      min      lq     mean   median       uq      max neval
+ ets_ts_q() 16.79739 16.8935 16.94779 16.92784 16.98505 17.27751   100
+> 
+> ## auto.arima
+> arima_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     arima_fit <- auto.arima(temp$x)
++     forecastETS <- forecast(arima_fit, 8)
++   })
++   
++ }
+> 
+> microbenchmark(arima_ts_q(), times=100)
+Unit: seconds
+         expr      min       lq     mean   median       uq      max neval
+ arima_ts_q() 40.57798 42.05758 41.99876 42.11395 42.15656 42.31488   100
+> 
+> ## stlar
+> stlar_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     forecastSTLAR <- stlar(temp$x, 8)
++   })
++   
++ }
+> 
+> microbenchmark(stlar_ts_q(), times=100)
+Unit: milliseconds
+         expr      min       lq    mean   median       uq      max neval
+ stlar_ts_q() 823.1034 830.9979 840.168 835.7193 841.0725 1007.702   100
+> 
+> ## tbats
+> tbats_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     fit_tbats <- tbats(temp$x)
++     forecast_tbats <- forecast(fit_tbats, h=8)
++   })
++   
++ }
+> 
+> microbenchmark(tbats_ts_q(), times=100)
+Unit: seconds
+         expr     min       lq     mean   median       uq      max neval
+ tbats_ts_q() 194.977 195.9415 199.7215 201.6841 201.9511 202.9913   100
+> 
+> ## snaive
+> snaive_ts_q <- function(){
++   lapply(quarterly_subset, function(temp){
++     forecastSTLAR <- snaive(temp$x, 8)
++   })
++   
++ }
+> 
+> microbenchmark(snaive_ts_q(), times=100)
+Unit: milliseconds
+          expr      min       lq     mean   median       uq      max neval
+ snaive_ts_q() 178.5093 183.0003 187.0003 185.5955 187.5184 351.1894   100
+> 
+> ## fforms - without forecasts
+> load("phdproject2/rfu_m4quarterly.rda")
+> fforms_ts_noforecast_q <- function(){
++   featureCal <- cal_features(quarterly_subset, database = "M4", h=8, highfreq = FALSE)
++   predModels <- predict(rf, featureCal)
++   
++ }
+> 
+> microbenchmark(fforms_ts_noforecast_q(), times=100)
+Error: Unknown column `seasonal_strength` 
+Execution halted

@@ -1,0 +1,61 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Copyright notice}{iii}{chapter*.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Abstract}{v}{chapter*.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Publications during enrolment}{vii}{chapter*.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Declaration}{ix}{chapter*.4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Acknowledgements}{xi}{chapter*.6}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.1}Background of the study}{2}{section.1.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.2}Meta-learning}{3}{section.1.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.2.1}Problem space}{4}{subsection.1.2.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.2.2}Feature space}{5}{subsection.1.2.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.2.3}Algorithm space}{6}{subsection.1.2.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Automated exponential smoothing (\texttt {ets})}{8}{subsubsection*.9}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Automated ARIMA modelling (\texttt {auto.arima})}{8}{subsubsection*.11}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.2.4}Algorithm performance space}{9}{subsection.1.2.4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.3}Linking feature space and algorithm performance space}{10}{section.1.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.3.1}Random forest algorithm}{10}{subsection.1.3.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.3.2}Extreme gradient boosting algorithm}{11}{subsection.1.3.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.3.3}Efficient Bayesian multivariate surface regression approach.}{13}{subsection.1.3.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.4}Objectives and thesis outline}{13}{section.1.4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {2}Meta-learning how to forecast time series}{17}{chapter.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {3}Peeking inside FFORMS: Feature-based forecast model selection}{49}{chapter.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {4}FFORMA: Feature-based forecast model averaging}{95}{chapter.4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {5}FFORMPP: Feature-based forecast model performance prediction}{103}{chapter.5}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {6}Conclusion}{133}{chapter.6}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6.1}Summary of the main ideas and contributions}{133}{section.6.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6.2}Software development and research reproducibility}{141}{section.6.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {6.2.1}Software}{141}{subsection.6.2.1}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {6.2.2}Reproducibility}{141}{subsection.6.2.2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6.3}Future directions}{142}{section.6.3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Bibliography}{147}{chapter*.16}% 

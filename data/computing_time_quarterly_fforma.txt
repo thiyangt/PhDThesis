@@ -1,0 +1,41 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # yearly data time to compute forecasts
+> library(M4metaresults)
+> library(microbenchmark)
+> library(xgboost)
+> library(M4metalearning)
+> 
+> 
+> # data
+> load("dataThesis/quarterly_subset.rda")
+> 
+> 
+> #this will take time
+> M4_fcast <- function(){
++   lapply(quarterly_subset, function(temp){
++     fcast <- forecast_meta_M4(model_M4, temp$x, h=8)
++   })
++ }
+> microbenchmark(M4_fcast(), times=100)
+Unit: seconds
+       expr      min       lq     mean   median       uq      max neval
+ M4_fcast() 541.7542 544.1331 544.8671 544.3903 544.7332 592.8742   100
+> 

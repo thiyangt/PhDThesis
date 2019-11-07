@@ -1,0 +1,148 @@
+
+R version 3.5.1 (2018-07-02) -- "Feather Spray"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # hourly data time to compute forecasts
+> 
+> # pkges
+> library(forecast)
+> library(forecTheta)
+> library(seer)
+> library(microbenchmark)
+> library(randomForest)
+> 
+> # data
+> load("dataThesis/hourly_subset.rda")
+> 
+> ### Convert hourly time series to multiple frequency
+> 
+> hourlym4_msts <- lapply(hourly_subset, function(temp){
++   temp$x <- convert_msts(temp$x, "hourly")
++   return(temp)
++ })
+> 
+> ## rw
+> rw_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     rw_fit <- rwf(temp$x, drift=FALSE, h=48)
++   })
++   
++ }
+> microbenchmark(rw_ts_h(), times=100)
+Unit: milliseconds
+      expr      min     lq     mean   median       uq      max neval
+ rw_ts_h() 226.3824 237.32 246.1866 241.4738 246.9041 479.8694   100
+> 
+> ## rwd
+> rwd_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     rwd_fit <- rwf(temp$x, drift=TRUE, h=48)
++   })
++   
++ }
+> microbenchmark(rwd_ts_h(), times=100)
+Unit: milliseconds
+       expr      min       lq    mean  median       uq      max neval
+ rwd_ts_h() 345.9074 356.9035 377.498 370.802 383.3606 630.5261   100
+> 
+> ## wn
+> wn_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     wn_fit <- mean(temp$x)
++     forecastWN <- rep(wn_fit, 48)
++   })
++   
++ }
+> microbenchmark(wn_ts_h(), times=100)
+Unit: milliseconds
+      expr      min      lq     mean   median      uq      max neval
+ wn_ts_h() 1.128538 1.14381 1.226974 1.154492 1.17986 5.222783   100
+> 
+> 
+> 
+> ## nn
+> nn_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     nn_fit <- nnetar(temp$x)
++     forecastETS <- forecast(nn_fit, 48)
++   })
++   
++ }
+> 
+> microbenchmark(nn_ts_h(), times=100)
+Unit: seconds
+      expr      min       lq     mean   median       uq      max neval
+ nn_ts_h() 348.7381 353.8936 355.2851 354.9711 357.5002 360.7793   100
+> 
+> 
+> 
+> ## stlar
+> stlar_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     forecastSTLAR <- stlar(temp$x, 48)
++   })
++   
++ }
+> 
+> microbenchmark(stlar_ts_h(), times=100)
+Unit: seconds
+         expr      min      lq     mean   median       uq      max neval
+ stlar_ts_h() 1.682801 1.69157 1.711743 1.700276 1.707941 1.849985   100
+> 
+> ## mstlets
+> 
+> mstlets_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     fit_stlf <- forecast::stlf(temp$x, method="ets")
++     forecastMSTL <- forecast(fit_stlf, h=48)$mean
++   })
++   
++ }
+> 
+> microbenchmark(mstlets_ts_h(), times=100)
+Unit: seconds
+           expr      min       lq     mean  median       uq      max neval
+ mstlets_ts_h() 10.08579 10.10954 10.18225 10.1303 10.23098 10.58054   100
+> 
+> ## mstlarima
+> mstlarima_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     fit_stlf <- forecast::stlf(temp$x, method="arima")
++     forecastMSTL <- forecast(fit_stlf, h=48)$mean
++   })
++   
++ }
+> 
+> microbenchmark(mstlarima_ts_h(), times=100)
+Unit: seconds
+             expr      min       lq     mean   median       uq      max neval
+ mstlarima_ts_h() 30.04157 30.50703 30.60647 30.60367 30.67855 31.37627   100
+> 
+> 
+> 
+> ## tbats
+> tbats_ts_h <- function(){
++   lapply(hourlym4_msts, function(temp){
++     fit_tbats <- tbats(temp$x)
++     forecast_tbats <- forecast(fit_tbats, h=48)
++   })
++   
++ }
+> 
+> microbenchmark(tbats_ts_h(), times=100)
+slurmstepd: error: *** JOB 4818653 ON hc00 CANCELLED AT 2019-10-07T10:14:32 DUE TO TIME LIMIT ***
